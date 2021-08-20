@@ -1,6 +1,9 @@
-# Aerial theme for SDDM
+# SugarCandyAerial theme for SDDM
 
-SDDM theme with Apple TV Aerial videos
+The combination between Aerial-Sddm and Sugar-Candy-Sddm.
+#### Check the original
+- [Aerial-Sddm](https://github.com/3ximus/aerial-sddm-theme.git)
+- [Sugar-Candy-Sddm](https://framagit.org/MarianArlt/sddm-sugar-candy)
 
 Videos are played randomly and diferent playlists are used based on time of day (only day and night diferenciation, night between 5pm - 5am) its possible to tweak to have more time diferentiation, the one used is provided with the videos.
 
@@ -38,7 +41,6 @@ If there is no active connection or the video can't be played the background wil
 If you wish to play local videos files just use the following command to generate the playlist-file (playlist_day.m3u or playlist_night.m3u) from a directory containing the videos:
 
 `find <path-to-your-directory> -maxdepth 1 -type f > <playlist-file>`
-
 If you would like to use the same videos but offline, simply download them using your shell, e.g. :
 
 ```
@@ -85,3 +87,6 @@ showTopBar=true
 ## License
 
 Theme is licensed under GPL.
+
+[a]: http://a "a"
+[b]: http://c "d"
