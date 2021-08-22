@@ -1,16 +1,15 @@
 [SddmGreeterTheme]
-Name=Aerial-candy HD Video
+Name=Sugar-Candy-Aerial
 Description=Aerial HD Video Stream
-Author=Fabio Almeida
-Copyright=(c) 2016, Fabio Almeida
+Author=bimokn97
+Copyright=(c) 2021, Bimo Kristianto N
 License=CC-BY-SA
 Type=sddm-theme
 Version=0.1
-Website=https://github.com/3ximus/aerial-sddm-theme
+Website=https://github.com/bimokn97/sugar-candy-aerial
 Screenshot=screens/screenshot.png
 MainScript=Main.qml
 ConfigFile=theme.conf
-Email=fabio_r11@hotmail.com
+Email=bimokn97@pm.me
 Theme-Id=aerial-candy-sddm
 Theme-API=2.0
-

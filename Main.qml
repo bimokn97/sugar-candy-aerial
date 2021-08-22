@@ -38,7 +38,7 @@ Pane {
     LayoutMirroring.enabled: config.ForceRightToLeft == "true" ? true : Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    padding: config.ScreenPaddingtrue
+    padding: config.ScreenPadding
     palette.button: "transparent"
     palette.highlight: config.AccentColor
     palette.text: config.MainColor
@@ -76,17 +76,7 @@ Pane {
         height: parent.height
         width: parent.width
 
-        //set background layer
-        Rectangle {
-            id: tintLayer
-            anchors.fill: parent
-            width: parent.width
-            height: parent.height
-            color: "black"
-            opacity: config.DimBackgroundImage
-            z: 1
-        }
-
+///     LoginForm BackgroundColor
         Rectangle {
             id: formBackground
             anchors.fill: form
@@ -100,8 +90,9 @@ Pane {
         LoginForm {
             id: form
 
+            layer.smooth: enable
             height: virtualKeyboard.state == "visible" ? parent.height - virtualKeyboard.implicitHeight : parent.height
-            width: parent.width / 2.5
+            width: parent.width / 3.25
             anchors.horizontalCenter: config.FormPosition == "center" ? parent.horizontalCenter : undefined
             anchors.left: config.FormPosition == "left" ? parent.left : undefined
             anchors.right: config.FormPosition == "right" ? parent.right : undefined
@@ -109,7 +100,7 @@ Pane {
             z: 1
         }
 
-        //virtual keyboard
+///     VirtualKeyboard
         Button {
             id: vkb
             onClicked: virtualKeyboard.switchState()
@@ -213,8 +204,24 @@ Pane {
             ]
         }
 
-        // Set Background Image
-        Image {
+///     BackgroundDimmer
+        Rectangle {
+            id: tintLayer
+            anchors.fill: parent
+            width: parent.width
+            height: parent.height
+            color: "black"
+            opacity: config.DimBackgroundImage
+            z: 1
+        }
+
+///     backgroud
+        Item{
+          id: background
+          anchors.fill: parent
+
+          // backgroundImage
+          Image {
             id: backgroundImage
 
             height: parent.height
@@ -237,116 +244,102 @@ Pane {
                                config.BackgroundImageVAlignment == "bottom" ?
                                Image.AlignBottom : Image.AlignVCenter
 
-            //source: config.background || config.Background
-
+            //source: config.background_img_day || config.background_img_night
             fillMode: config.ScaleImageCropped == "true" ? Image.PreserveAspectCrop : Image.PreserveAspectFit
             asynchronous: true
             cache: true
             clip: true
             mipmap: true
-            MouseArea {
-                anchors.fill: backgroundImage
-                onClicked: parent.forceActiveFocus()
-            }
+          }
+
+          // Set Background Video1
+          MediaPlayer {
+              id: mediaplayer1
+              autoPlay: true; muted: true
+              playlist: Playlist {
+                  id: playlist1
+                  playbackMode: Playlist.Random
+                  onLoaded: { mediaplayer1.play() }
+              }
+          }
+          VideoOutput {
+              id: video1
+              fillMode: VideoOutput.PreserveAspectCrop
+              anchors.fill: parent; source: mediaplayer1
+              MouseArea {
+                  id: mouseArea1
+                  anchors.fill: parent;
+                  //onPressed: {playlist1.shuffle(); playlist1.next();}
+                  onPressed: {
+                      fader1.state = fader1.state == "off" ? "on" : "off" ;
+                      if (config.autofocusInput == "true") {
+                          if (username_input_box.text == "")
+                              username_input_box.focus = true
+                          else
+                              password_input_box.focus = true
+                      }
+                  }
+              }
+              Keys.onPressed: {
+                  fader.state = "on";
+                  if (username_input_box.text == "")
+                      username_input_box.focus = true
+                  else
+                      password_input_box.focus = true
+              }
+          }
+
+          // Set Background Video2
+          MediaPlayer {
+              id: mediaplayer2
+              autoPlay: true; muted: true
+              playlist: Playlist {
+                  id: playlist2; playbackMode: Playlist.Random
+                  //onLoaded: { mediaplayer2.play() }
+              }
+          }
+          VideoOutput {
+              id: video2
+              fillMode: VideoOutput.PreserveAspectCrop
+              anchors.fill: parent; source: mediaplayer2
+              opacity: 0
+              MouseArea {
+                  id: mouseArea2
+                  enabled: false
+                  anchors.fill: parent;
+                  onPressed: {
+                      fader1.state = fader1.state == "off" ? "on" : "off" ;
+                      if (config.autofocusInput == "true") {
+                          if (username_input_box.text == "")
+                              username_input_box.focus = true
+                          else
+                              password_input_box.focus = true
+                      }
+                  }
+              }
+              Behavior on opacity {
+                  enabled: true
+                  NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
+              }
+              Keys.onPressed: {
+                  fader2.state = "on";
+                  if (username_input_box.text == "")
+                      username_input_box.focus = true
+                  else
+                      password_input_box.focus = true
+              }
+          }
+
         }
 
-        // Set Background Video1
-        MediaPlayer {
-            id: mediaplayer1
-            autoPlay: true; muted: true
-            playlist: Playlist {
-                id: playlist1
-                playbackMode: Playlist.Random
-                onLoaded: { mediaplayer1.play() }
-            }
-        }
-        VideoOutput {
-            id: video1
-            fillMode: VideoOutput.PreserveAspectCrop
-            anchors.fill: parent; source: mediaplayer1
-            MouseArea {
-                id: mouseArea1
-                anchors.fill: parent;
-                //onPressed: {playlist1.shuffle(); playlist1.next();}
-                onPressed: {
-                    fader1.state = fader1.state == "off" ? "on" : "off"
-
-                    /*if (config.autofocusInput == "true") {
-                        if (username_input_box.text == "")
-                            username_input_box.focus = true
-                        else
-                            password_input_box.focus = true
-                    }*/
-                }
-            }
-            /*Keys.onPressed: {
-                fader1.state = "on";
-                if (username_input_box.text == "")
-                    username_input_box.focus = true
-                else
-                    password_input_box.focus = true
-            }*/
-        }
         WallpaperFader {
-            id: fader1
-            visible: true
-            width: form.width
-            height: parent.height
-            anchors.fill: parent
-            state: "off"
-            source: video1
-            mainStack: form
-            footer: form
-        }
-
-        // Set Background Video2
-        MediaPlayer {
-            id: mediaplayer2
-            autoPlay: true; muted: true
-            playlist: Playlist {
-                id: playlist2; playbackMode: Playlist.Random
-                //onLoaded: { mediaplayer2.play() }
-            }
-        }
-        VideoOutput {
-            id: video2
-            fillMode: VideoOutput.PreserveAspectCrop
-            anchors.fill: parent; source: mediaplayer2
-            opacity: 0
-            MouseArea {
-                id: mouseArea2
-                enabled: false
-                anchors.fill: parent;
-                onPressed: {
-                    fader2.state = fader2.state == "off" ? "on" : "off" ;
-                    /*if (config.autofocusInput == "true") {
-                        if (username_input_box.text == "")
-                            username_input_box.focus = true
-                        else
-                            password_input_box.focus = true
-                    }*/
-                }
-            }
-            Behavior on opacity {
-                enabled: true
-                NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
-            }
-            /*Keys.onPressed: {
-                fader2.state = "on";
-                if (username_input_box.text == "")
-                    username_input_box.focus = true
-                else
-                    password_input_box.focus = true
-            }*/
-        }
-        WallpaperFader {
-            id: fader2
+            id: fader
             visible: true
             anchors.fill: parent
             state: "off"
-            source: video2
-            mainStack: form
-            footer: inputContainer
+            blurSource: background
+            bgForm: formBackground
+            loginForm: form
         }
 
         property MediaPlayer currentPlayer: mediaplayer1
@@ -380,8 +373,7 @@ Pane {
             }
         }
 
-        // this timer waits for fade to stop and stops the video
-        Timer {
+        Timer { // this timer waits for fade to stop and stops the video
             id: triggerTimer
             interval: 4000; running: false; repeat: false
             onTriggered: {
@@ -391,64 +383,37 @@ Pane {
                     mediaplayer2.stop()
             }
         }
-/*
-        ShaderEffectSource {
-            id: blurMask
 
-            sourceItem: video1
-            width: form.width
-            height: parent.height
-            anchors.centerIn: form
-            sourceRect: Qt.rect(x,y,width,height)
-            visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
+        MouseArea {
+            anchors.fill: parent
+            z: 0
+            onPressed: {
+              parent.forceActiveFocus();
+              //form.inputVisibility = form.inputVisibility == true ? false:true;
+              fader.state = fader.state == "off" ? "on" : "off" ;
+            }
         }
+      }
+      Component.onCompleted: {
 
-        GaussianBlur {
-            id: blur
+          video1.focus = true
 
-            height: parent.height
-            width: config.FullBlur == "true" ? parent.width : form.width
-            source: config.FullBlur == "true" ? video1 : blurMask
-            radius: config.BlurRadius
-            samples: config.BlurRadius * 2 + 1
-            cached: true
-            anchors.centerIn: config.FullBlur == "true" ? parent : form
-            visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
-        }
-*/
-    }
-        Component.onCompleted: {
-        // Set Focus
-        /* if (username_input_box.text == "") */
-        /*     username_input_box.focus = true */
-        /* else */
-        /*     password_input_box.focus = true */
+          // load and randomize playlist
+          var time = parseInt(new Date().toLocaleTimeString(Qt.locale(),'h'))
+          if ( time >= 5 && time <= 17 ) {
+              playlist1.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
+              playlist2.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
+              backgroundImage.source = config.background_img_day
+          } else {
+              playlist1.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
+              playlist2.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
+              backgroundImage.source = config.background_img_night
+          }
 
-        video1.focus = true
+          for (var k = 0; k < Math.ceil(Math.random() * 10) ; k++) {
+              playlist1.shuffle()
+              playlist2.shuffle()
+          }
 
-        // load and randomize playlist
-        var time = parseInt(new Date().toLocaleTimeString(Qt.locale(),'h'))
-        if ( time >= 5 && time <= 17 ) {
-            playlist1.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
-            backgroundImage.source = config.background_img_day
-        } else {
-            playlist1.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
-            backgroundImage.source = config.background_img_night
-        }
-
-        for (var k = 0; k < Math.ceil(Math.random() * 10) ; k++) {
-            playlist1.shuffle()
-            playlist2.shuffle()
-        }
-/*
-        if (config.showLoginButton == "false") {
-            login_button.visible = false
-            password_input_box.anchors.rightMargin = 0
-            clear_passwd_button.anchors.rightMargin = 0
-        }
-        clear_passwd_button.visible = false
-        */
-    }
+      }
 }

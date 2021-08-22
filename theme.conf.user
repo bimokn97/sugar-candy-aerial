@@ -1,7 +1,4 @@
 [General]
 
-background_img_day=Assets/background-day.jpg
-background_img_night=Assets/background-night.jpg
-background_vid_day=Assets/playlists/day.m3u
-background_vid_night=Assets/playlists/night.m3u
+
 Font="Sf Pro Display"

@@ -17,16 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 
-import QtQuick 2.6
-import QtQuick.Controls 1.1
-import QtQuick.Layouts 1.1
+import QtQuick 2.11
+import QtQuick.Controls 2.4
+import QtQuick.Layouts 1.11
 import QtGraphicalEffects 1.0
 
 Item {
     id: wallpaperFader
-    property Item mainStack
-    property Item footer
-    property alias source: wallpaperBlur.source
+    property Item bgForm
+    property Item loginForm
+    property Item blurSource
+
     state: lockScreenRoot.uiVisible ? "on" : "off"
     property real factor: 20
 
@@ -38,17 +39,50 @@ Item {
             easing.type: Easing.InOutQuad
         }
     }
-    FastBlur {
-        id: wallpaperBlur
-        anchors.fill: parent
-        radius: 50 * wallpaperFader.factor
+    ShaderEffectSource {
+        id: blurMask
+
+        sourceItem: blurSource
+        width: loginForm.width
+        height: parent.height
+        anchors.centerIn: loginForm
+        sourceRect: Qt.rect(x,y,width,height)
+        visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
     }
+
+    FastBlur {
+        id: wallpaperFastBlur
+
+        anchors.centerIn: config.FullBlur == "true" ? parent : loginForm
+        height: parent.height
+        width: config.FullBlur == "true" ? parent.width : loginForm.width
+        radius: config.BlurRadius * wallpaperFader.factor
+        //cached: true
+        source: config.FullBlur == "true" ? blurSource : blurMask
+        visible: ( config.FullBlur == "true" || config.PartialBlur == "true" ) && config.BlurType == "fast" ? true : false
+        z: 1
+    }
+
+    GaussianBlur {
+        id: wallpapperGaussianBlur
+
+        anchors.centerIn: config.FullBlur == "true" ? parent : loginForm
+        height: parent.height
+        width: config.FullBlur == "true" ? parent.width : loginForm.width
+        radius: config.BlurRadius * wallpaperFader.factor
+        samples: config.BlurRadius * 2 + 1
+        //cached: true
+        source: config.FullBlur == "true" ? blurSource : blurMask
+        visible: ( config.FullBlur == "true" || config.PartialBlur == "true" ) && config.BlurType == "gaussian" ? true : false
+        z: 1
+    }
+
     ShaderEffect {
         id: wallpaperShader
         anchors.fill: parent
         supportsAtlasTextures: true
         property var source: ShaderEffectSource {
-            sourceItem: wallpaperBlur
+            sourceItem: blurSource
             live: true
             hideSource: true
             textureMirroring: ShaderEffectSource.NoMirroring
@@ -72,7 +106,6 @@ Item {
                     0,         0,         intensity, 0,
                     0,         0,         0,         1
                 ));
-    
 
         fragmentShader: "
             uniform mediump mat4 colorMatrix;
@@ -91,31 +124,31 @@ Item {
         State {
             name: "on"
             PropertyChanges {
-                target: mainStack
-                opacity: 1
+              target: bgForm
+              opacity: config.PartialBlur == "true" ? 0.3 : 1
             }
             PropertyChanges {
-                target: footer
+                target: loginForm
                 opacity: 1
             }
             PropertyChanges {
                 target: wallpaperFader
-                factor: 1
+                factor: 1.0
             }
         },
         State {
             name: "off"
             PropertyChanges {
-                target: mainStack
-                opacity: 0
+              target: bgForm
+              opacity: 0
             }
             PropertyChanges {
-                target: footer
+                target: loginForm.input
                 opacity: 0
             }
             PropertyChanges {
                 target: wallpaperFader
-                factor: 0
+                factor: 0.0
             }
         }
     ]
@@ -125,14 +158,14 @@ Item {
             to: "on"
             //Note: can't use animators as they don't play well with parallelanimations
             ParallelAnimation {
+              NumberAnimation {
+                  target: bgForm
+                  property: "opacity"
+                  duration: 1000
+                  easing.type: Easing.InOutQuad
+              }
                 NumberAnimation {
-                    target: mainStack
-                    property: "opacity"
-                    duration: units.longDuration
-                    easing.type: Easing.InOutQuad
-                }
-                NumberAnimation {
-                    target: footer
+                    target: loginForm.input
                     property: "opacity"
                     duration: units.longDuration
                     easing.type: Easing.InOutQuad
@@ -143,14 +176,14 @@ Item {
             from: "on"
             to: "off"
             ParallelAnimation {
-                NumberAnimation {
-                    target: mainStack
+              NumberAnimation {
+                    target: bgForm
                     property: "opacity"
-                    duration: 500
+                    duration: 1000
                     easing.type: Easing.InOutQuad
                 }
                 NumberAnimation {
-                    target: footer
+                    target: loginForm.input
                     property: "opacity"
                     duration: 500
                     easing.type: Easing.InOutQuad
@@ -158,4 +191,5 @@ Item {
             }
         }
     ]
+
 }

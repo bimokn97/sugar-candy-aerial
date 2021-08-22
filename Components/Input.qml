@@ -30,6 +30,7 @@ import QtGraphicalEffects 1.0
 Column {
     id: inputContainer
     Layout.fillWidth: true
+
     property Control exposeSession: sessionSelect.exposeSession
     property bool failed
 

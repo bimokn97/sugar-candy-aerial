@@ -1,9 +1,14 @@
 # SugarCandyAerial theme for SDDM
 
 The combination between Aerial-Sddm and Sugar-Candy-Sddm.
+
 #### Check the original
 - [Aerial-Sddm](https://github.com/3ximus/aerial-sddm-theme.git)
 - [Sugar-Candy-Sddm](https://framagit.org/MarianArlt/sddm-sugar-candy)
+
+#### Wallpapper By:
+![Night] (https://www.pling.com/p/1316010/)
+![Day] (https://www.pling.com/p/1316127)
 
 Videos are played randomly and diferent playlists are used based on time of day (only day and night diferenciation, night between 5pm - 5am) its possible to tweak to have more time diferentiation, the one used is provided with the videos.
 
