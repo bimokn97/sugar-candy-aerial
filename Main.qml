@@ -97,6 +97,7 @@ Pane {
             anchors.left: config.FormPosition == "left" ? parent.left : undefined
             anchors.right: config.FormPosition == "right" ? parent.right : undefined
             virtualKeyboardActive: virtualKeyboard.state == "visible" ? true : false
+            state: "off"
             z: 1
         }
 
@@ -373,7 +374,8 @@ Pane {
             }
         }
 
-        Timer { // this timer waits for fade to stop and stops the video
+        // this timer waits for fade to stop and stops the video
+        Timer {
             id: triggerTimer
             interval: 4000; running: false; repeat: false
             onTriggered: {
@@ -384,6 +386,7 @@ Pane {
             }
         }
 
+        //
         MouseArea {
             anchors.fill: parent
             z: 0
@@ -391,7 +394,17 @@ Pane {
               parent.forceActiveFocus();
               //form.inputVisibility = form.inputVisibility == true ? false:true;
               fader.state = fader.state == "off" ? "on" : "off" ;
+              form.state = fader.state ;
+
             }
+        }
+        Keys.onPressed: {
+            fader.state = "on";
+            form.state = fader.state ;
+            if (username.text == "")
+                username.focus = true
+            else
+                password.focus = true
         }
       }
       Component.onCompleted: {

@@ -35,6 +35,7 @@ ColumnLayout {
     property alias systemButtonVisibility: systemButtons.visible
     property alias clockVisibility: clock.visible
     property bool virtualKeyboardActive
+    state: lockScreenRoot.uiVisible ? "on" : "off"
 
     Clock {
         id: clock
@@ -50,7 +51,6 @@ ColumnLayout {
         Layout.preferredHeight: root.height / 8
         Layout.leftMargin: p != "0" ? a == "left" ? -p : a == "right" ? p : 0 : 0
         Layout.topMargin: virtualKeyboardActive ? -height * 1.5 : 0
-        //visible: false
     }
 
     SystemButtons {
@@ -60,7 +60,70 @@ ColumnLayout {
         Layout.maximumHeight: root.height / 4
         Layout.leftMargin: p != "0" ? a == "left" ? -p : a == "right" ? p : 0 : 0
         exposedSession: input.exposeSession
-        //visible: false
     }
+
+    states: [
+      State{
+        name: "on"
+        PropertyChanges{
+          target: input
+          opacity: 1
+        }
+        PropertyChanges{
+          target: systemButtons
+          opacity: 1
+        }
+      },
+      State{
+        name: "off"
+        PropertyChanges{
+          target: input
+          opacity: 0
+        }
+        PropertyChanges{
+          target: systemButtons
+          opacity: 0
+        }
+      }
+    ]
+    transitions: [
+        Transition {
+            from: "off"
+            to: "on"
+            //Note: can't use animators as they don't play well with parallelanimations
+            ParallelAnimation {
+                NumberAnimation {
+                    target: input
+                    property: "opacity"
+                    duration: 1500
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: systemButtons
+                    property: "opacity"
+                    duration: 1500
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        },
+        Transition {
+            from: "on"
+            to: "off"
+            ParallelAnimation {
+                NumberAnimation {
+                    target: input
+                    property: "opacity"
+                    duration: 500
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: systemButtons
+                    property: "opacity"
+                    duration: 500
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+    ]
 
 }

@@ -215,6 +215,14 @@ Column {
                         target: username
                         color: root.palette.highlight
                     }
+                    PropertyChanges {
+                      target: fader
+                      state: "on"
+                    }
+                    PropertyChanges {
+                      target: form
+                      state: "on"
+                    }
                 }
             ]
         }
@@ -261,6 +269,14 @@ Column {
                 PropertyChanges {
                     target: password
                     color: root.palette.highlight
+                }
+                PropertyChanges {
+                  target: fader
+                  state: "on"
+                }
+                PropertyChanges {
+                  target: form
+                  state: "on"
                 }
             }
         ]

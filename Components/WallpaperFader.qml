@@ -128,10 +128,6 @@ Item {
               opacity: config.PartialBlur == "true" ? 0.3 : 1
             }
             PropertyChanges {
-                target: loginForm
-                opacity: 1
-            }
-            PropertyChanges {
                 target: wallpaperFader
                 factor: 1.0
             }
@@ -143,15 +139,12 @@ Item {
               opacity: 0
             }
             PropertyChanges {
-                target: loginForm.input
-                opacity: 0
-            }
-            PropertyChanges {
                 target: wallpaperFader
                 factor: 0.0
             }
         }
     ]
+    
     transitions: [
         Transition {
             from: "off"
@@ -161,15 +154,9 @@ Item {
               NumberAnimation {
                   target: bgForm
                   property: "opacity"
-                  duration: 1000
+                  duration: units.longDuration
                   easing.type: Easing.InOutQuad
               }
-                NumberAnimation {
-                    target: loginForm.input
-                    property: "opacity"
-                    duration: units.longDuration
-                    easing.type: Easing.InOutQuad
-                }
             }
         },
         Transition {
@@ -178,12 +165,6 @@ Item {
             ParallelAnimation {
               NumberAnimation {
                     target: bgForm
-                    property: "opacity"
-                    duration: 1000
-                    easing.type: Easing.InOutQuad
-                }
-                NumberAnimation {
-                    target: loginForm.input
                     property: "opacity"
                     duration: 500
                     easing.type: Easing.InOutQuad
