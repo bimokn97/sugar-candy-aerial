@@ -398,18 +398,10 @@ Pane {
 
             }
         }
-        Keys.onPressed: {
-            fader.state = "on";
-            form.state = fader.state ;
-            if (username.text == "")
-                username.focus = true
-            else
-                password.focus = true
-        }
       }
       Component.onCompleted: {
 
-          video1.focus = true
+          //video1.focus = true
 
           // load and randomize playlist
           var time = parseInt(new Date().toLocaleTimeString(Qt.locale(),'h'))
