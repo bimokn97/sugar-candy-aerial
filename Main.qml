@@ -97,7 +97,7 @@ Pane {
             anchors.left: config.FormPosition == "left" ? parent.left : undefined
             anchors.right: config.FormPosition == "right" ? parent.right : undefined
             virtualKeyboardActive: virtualKeyboard.state == "visible" ? true : false
-            state: "off"
+            state: fader.state
             z: 1
         }
 
@@ -274,19 +274,23 @@ Pane {
                   onPressed: {
                       fader1.state = fader1.state == "off" ? "on" : "off" ;
                       if (config.autofocusInput == "true") {
-                          if (username_input_box.text == "")
-                              username_input_box.focus = true
+                          if (username.text == "")
+                              usernameFocus = true
                           else
-                              password_input_box.focus = true
+                              passwordFocus = true
                       }
                   }
               }
+              Behavior on opacity {
+                  enabled: true
+                  NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
+              }
               Keys.onPressed: {
                   fader.state = "on";
-                  if (username_input_box.text == "")
-                      username_input_box.focus = true
+                  if (username.text == "")
+                      usernameFocus = true
                   else
-                      password_input_box.focus = true
+                      passwordFocus = true
               }
           }
 
@@ -311,10 +315,10 @@ Pane {
                   onPressed: {
                       fader1.state = fader1.state == "off" ? "on" : "off" ;
                       if (config.autofocusInput == "true") {
-                          if (username_input_box.text == "")
-                              username_input_box.focus = true
+                          if (username.text == "")
+                              usernameFocus = true
                           else
-                              password_input_box.focus = true
+                              passwordFocus = true
                       }
                   }
               }
@@ -323,24 +327,43 @@ Pane {
                   NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
               }
               Keys.onPressed: {
-                  fader2.state = "on";
-                  if (username_input_box.text == "")
-                      username_input_box.focus = true
+                  fader.state = "on";
+                  if (username.text == "")
+                      usernameFocus = true
                   else
-                      password_input_box.focus = true
+                      passwordFocus = true
               }
           }
-
         }
 
         WallpaperFader {
             id: fader
             visible: true
             anchors.fill: parent
-            state: "off"
+            state: "on"
             blurSource: background
             bgForm: formBackground
             loginForm: form
+
+            MouseArea {
+                anchors.fill: parent
+                z: 0
+                onPressed: {
+                    parent.forceActiveFocus();
+                //  form.inputVisibility = form.inputVisibility == true ? false:true;
+                    fader.state = fader.state == "off" ? "on" : "off" ;
+                    faderTimer.start();
+                }
+            }
+            // timer for fader 5 second off
+            Timer{
+                id: faderTimer;
+                interval: 5000; running: true;
+                onTriggered: {
+                    fader.state = "off";
+                    faderTimer.stop();
+                }
+            }
         }
 
         property MediaPlayer currentPlayer: mediaplayer1
@@ -348,16 +371,16 @@ Pane {
         // Timer event to handle fade between videos
         Timer {
             interval: 1000;
-            running: true; repeat: true
+            running: true; triggeredOnStart: true; repeat: true
             onTriggered: {
                 if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 10000) { // pre load the 2nd player
-                    if (video2.opacity == 0) { // toogle opacity
+                    if ( video2.opacity == 0 ) { // toogle opacity
                         mediaplayer2.play()
                     } else
                         mediaplayer1.play()
                 }
                 if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 3000) { // initiate transition
-                    if (video2.opacity == 0) { // toogle opacity
+                    if ( video2.opacity == 0 ) { // toogle opacity
                         mouseArea1.enabled = false
                         currentPlayer = mediaplayer2
                         video2.opacity = 1
@@ -385,22 +408,8 @@ Pane {
                     mediaplayer2.stop()
             }
         }
-
-        //
-        MouseArea {
-            anchors.fill: parent
-            z: 0
-            onPressed: {
-              parent.forceActiveFocus();
-              //form.inputVisibility = form.inputVisibility == true ? false:true;
-              fader.state = fader.state == "off" ? "on" : "off" ;
-              form.state = fader.state ;
-
-            }
-        }
       }
       Component.onCompleted: {
-
           //video1.focus = true
 
           // load and randomize playlist
@@ -419,6 +428,5 @@ Pane {
               playlist1.shuffle()
               playlist2.shuffle()
           }
-
       }
 }

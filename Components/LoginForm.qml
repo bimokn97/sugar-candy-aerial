@@ -90,7 +90,7 @@ ColumnLayout {
         Transition {
             from: "off"
             to: "on"
-            //Note: can't use animators as they don't play well with parallelanimations
+            //Note: can't use animators as they don't play well with parallel animations
             ParallelAnimation {
                 NumberAnimation {
                     target: input

@@ -194,6 +194,9 @@ Column {
             onFocusChanged:{
                 if(focus)
                     selectAll()
+
+                if (usernameFocus || passwordFocus)
+                    fader.state = "on"
             }
             background: Rectangle {
                 color: "transparent"
@@ -216,14 +219,6 @@ Column {
                     PropertyChanges {
                         target: username
                         color: root.palette.highlight
-                    }
-                    PropertyChanges {
-                      target: fader
-                      state: "on"
-                    }
-                    PropertyChanges {
-                      target: form
-                      state: "on"
                     }
                 }
             ]
@@ -257,6 +252,17 @@ Column {
                 radius: config.RoundCorners || 0
             }
             onAccepted: loginButton.clicked()
+            onFocusChanged:{
+                if(focus)
+                    selectAll()
+
+                if (usernameFocus || passwordFocus){
+                    fader.state = "on"
+                    faderTimer.stop()
+                  }else{
+                    faderTimer.start()
+                  }
+            }
             KeyNavigation.down: revealSecret
         }
 
@@ -271,14 +277,6 @@ Column {
                 PropertyChanges {
                     target: password
                     color: root.palette.highlight
-                }
-                PropertyChanges {
-                  target: fader
-                  state: "on"
-                }
-                PropertyChanges {
-                  target: form
-                  state: "on"
                 }
             }
         ]
